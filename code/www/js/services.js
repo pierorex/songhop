@@ -20,8 +20,22 @@ angular.module('songhop.services', [])  /*global angular*/
   return o;
 })
 
-.factory('Recommendations', function($http, SERVER) {
+.factory('Recommendations', function($http, SERVER, $q) {
+  var media;
   var o = {queue: []};
+  
+  o.init = function() {
+    if (o.queue.length == 0) {
+      // if there's nothing in the queue, fill it.
+      // this also means that this is the first call of init
+      return o.getNextSongs();
+    }
+    
+    else {
+      // otherwise, play the current song
+      return o.playCurrentSong();
+    }
+  };
   
   o.getNextSongs = function() {
     return $http({
@@ -33,14 +47,34 @@ angular.module('songhop.services', [])  /*global angular*/
     });
   };
   
-  o.getNextSong = function() {
+  o.nextSong = function() {
     // pop first song
     o.queue.shift();
+    
+    // end the song
+    o.haltAudio();
     
     // low on queue? Let's fill it
     if (o.queue.length <= 3) {
       o.getNextSongs();
     }
+  };
+  
+  o.playCurrentSong = function() {
+    var defer = $q.defer();
+    media = new Audio(o.queue[0].preview_url);
+    
+    media.addEventListener('loaddeddata', function() {
+      defer.resolve();
+    });
+    
+    media.play();
+    
+    return defer.promise;
+  };
+  
+  o.haltAudio = function() {
+    if (media) media.pause();
   };
   
   return o;

@@ -6,9 +6,10 @@ Controller for the discover page
 */
 .controller('DiscoverCtrl', function($scope, $timeout, User, Recommendations) {
   // get our first songs
-  Recommendations.getNextSongs()
+  Recommendations.init()
     .then(function () {
       $scope.currentSong = Recommendations.queue[0];
+      Recommendations.playCurrentSong();
     }
   );
 
@@ -22,12 +23,13 @@ Controller for the discover page
     if (bool) User.addSongToFavorites($scope.currentSong);
     
     // prepare the next song
-    Recommendations.getNextSong();
+    Recommendations.nextSong();
+    Recommendations.playCurrentSong();
     
     $timeout(function() {
       // $timeout to allow animation to complete before changing to next song
       $scope.currentSong = Recommendations.queue[0];
-    }, 250)
+    }, 250);
   };
   
   // used for retrieving the next album image.
@@ -57,6 +59,13 @@ Controller for the favorites page
 /*
 Controller for our tab bar
 */
-.controller('TabsCtrl', function($scope) {
-
+.controller('TabsCtrl', function($scope, Recommendations) {
+  // stop audio when going to favorites page
+  $scope.enteringFavorites = function() {
+    Recommendations.haltAudio();
+  };
+  
+  $scope.leavingFavorites = function() {
+    Recommendations.init()
+  };
 });
