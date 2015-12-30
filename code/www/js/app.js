@@ -15,8 +15,6 @@ angular.module('songhop', ['ionic', 'songhop.controllers'])
     if(window.StatusBar) {
       StatusBar.styleDefault();
     }
-    
-
   });
 })
 
@@ -28,8 +26,7 @@ angular.module('songhop', ['ionic', 'songhop.controllers'])
   // Set up the various states in which the app can be.
   // Each state's controller can be found in controllers.js.
   $stateProvider
-
-
+  
   // Set up an abstract state for the tabs directive:
   .state('tab', {
     url: '/tab',
