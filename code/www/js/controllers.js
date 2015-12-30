@@ -71,12 +71,16 @@ Controller for the discover page
 /*
 Controller for the favorites page
 */
-.controller('FavoritesCtrl', function($scope, User) {
+.controller('FavoritesCtrl', function($scope, User, $window) {
   // get the list of our favorites from the user service
   $scope.favorites = User.favorites;
   
   $scope.removeSong = function(song, index) {
     User.removeSongFromFavorites(song, index);
+  };
+  
+  $scope.openSong = function(song) {
+    $window.open(song.open_url, "_system");
   };
 })
 
