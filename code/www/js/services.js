@@ -2,7 +2,10 @@ angular.module('songhop.services', [])  /*global angular*/
 .factory('User', function() {
   
   // array for our favorite songs
-  var o = {favorites: []};
+  var o = {
+    favorites: [],
+    new_favorites: 0 
+  };
   
   o.addSongToFavorites = function(song) {
     // make sure there's a song to add
@@ -10,6 +13,7 @@ angular.module('songhop.services', [])  /*global angular*/
 
     // add to favorites array
     o.favorites.unshift(song);
+    o.new_favorites++;
   };
   
   o.removeSongFromFavorites = function(song, index) {
@@ -17,8 +21,13 @@ angular.module('songhop.services', [])  /*global angular*/
     o.favorites.splice(index, 1);
   };
 
+  o.favoritesCount = function() {
+    return o.new_favorites;
+  }
+
   return o;
 })
+
 
 .factory('Recommendations', function($http, SERVER, $q) {
   var media;
@@ -64,12 +73,11 @@ angular.module('songhop.services', [])  /*global angular*/
     var defer = $q.defer();
     media = new Audio(o.queue[0].preview_url);
     
-    media.addEventListener('loaddeddata', function() {
+    media.addEventListener("loadeddata", function() {
       defer.resolve();
     });
     
     media.play();
-    
     return defer.promise;
   };
   

@@ -4,32 +4,57 @@ angular.module('songhop.controllers', ['ionic', 'songhop.services'])
 /*
 Controller for the discover page
 */
-.controller('DiscoverCtrl', function($scope, $timeout, User, Recommendations) {
+.controller('DiscoverCtrl', function($scope, $ionicLoading, $timeout, User, 
+                                     Recommendations) {
+  // helper functions for loading
+  var showLoading = function() {
+    $ionicLoading.show({
+      template: '<i class="ion-loading-c"></i>',
+      noBackdrop: true
+    });
+  };
+  
+  var hideLoading = function() {
+    $ionicLoading.hide();
+  };
+  
+  // set loading to true first time while we retrieve songs from server.
+  showLoading();
+  
   // get our first songs
   Recommendations.init()
-    .then(function () {
+    .then(function() {
       $scope.currentSong = Recommendations.queue[0];
-      Recommendations.playCurrentSong();
-    }
-  );
+      return Recommendations.playCurrentSong();
+    })
+    .then(function() {
+      // turn loading off
+      hideLoading();
+      $scope.currentSong.loaded = true;
+    });
 
   // fired when we favorite / skip a song.
   $scope.sendFeedback = function(bool) {
+    // first, add to favorites if they favorited
+    if (bool) User.addSongToFavorites($scope.currentSong);
+    
     // set variable for the correct animation sequence
     $scope.currentSong.rated = bool;
     $scope.currentSong.hide = true;
     
-    // first, add to favorites if they favorited
-    if (bool) User.addSongToFavorites($scope.currentSong);
-    
     // prepare the next song
     Recommendations.nextSong();
-    Recommendations.playCurrentSong();
     
     $timeout(function() {
       // $timeout to allow animation to complete before changing to next song
       $scope.currentSong = Recommendations.queue[0];
+      $scope.currentSong.loaded = false;
     }, 250);
+    
+    Recommendations.playCurrentSong()
+    .then(function() {
+      $scope.currentSong.loaded = true;
+    });
   };
   
   // used for retrieving the next album image.
@@ -59,13 +84,17 @@ Controller for the favorites page
 /*
 Controller for our tab bar
 */
-.controller('TabsCtrl', function($scope, Recommendations) {
+.controller('TabsCtrl', function($scope, Recommendations, User) {
   // stop audio when going to favorites page
   $scope.enteringFavorites = function() {
     Recommendations.haltAudio();
+    User.new_favorites = 0;
   };
   
   $scope.leavingFavorites = function() {
-    Recommendations.init()
+    Recommendations.init();
   };
+  
+  // expose the number of new favorites to the scope
+  $scope.favoritesCount = User.favoritesCount;
 });
