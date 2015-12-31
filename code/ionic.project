@@ -1,4 +1,11 @@
 {
   "name": "songhop",
-  "app_id": "ff712038"
+  "app_id": "ff712038",
+  "browsers": [
+    {
+      "platform": "android",
+      "browser": "crosswalk",
+      "version": "12.41.296.5"
+    }
+  ]
 }
