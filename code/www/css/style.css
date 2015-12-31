@@ -5,6 +5,12 @@
   background-repeat: no-repeat;
 }
 
+.pane {
+  background:url(../img/splash-bkg.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
 .splash-page .card {
   margin-top:40px;
 }
