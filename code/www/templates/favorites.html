@@ -14,9 +14,13 @@
         <h2>{{ song.title }}</h2>
         <p>{{ song.artist }}</p>
         
-        <ion-option-button class="button-assertive"
+        <ion-option-button class="button-royal"
                            ng-click="removeSong(song, $index)">
           <i class="icon ion-close"></i>
+        </ion-option-button>
+        <ion-option-button class="button-royal" align="center"
+                           ng-click="showActionSheet(song.url)">
+          <i class="icon ion-share"></i>
         </ion-option-button>
         
       </ion-item>

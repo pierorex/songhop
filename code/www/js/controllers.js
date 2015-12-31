@@ -68,10 +68,12 @@ Controller for the discover page
   };
 })
 
+
 /*
 Controller for the favorites page
 */
-.controller('FavoritesCtrl', function($scope, User, $window) {
+.controller('FavoritesCtrl', function($scope, User, $window, 
+                                      $ionicActionSheet) {
   // get the list of our favorites from the user service
   $scope.favorites = User.favorites;
   $scope.username = User.username;
@@ -81,7 +83,36 @@ Controller for the favorites page
   };
   
   $scope.openSong = function(song) {
-    $window.open(song.open_url, "_system");
+    $window.open(song.open_url, '_system');
+  };
+  
+  $scope.showActionSheet = function(song_url) {
+    var hide_sheet = $ionicActionSheet.show({
+      buttons: [
+        { text: '<i class="ion-social-twitter"></i> <b>Twitter</b>'},
+        { text: '<i class="ion-social-facebook"></i><b>acebook</b>'},
+        { text: '<i class="ion-social-googleplus"></i> <b>Google Plus</b>'}
+      ],
+      titleText: 'Come on ' + User.username + ', share this song!',
+      cancelText: 'Cancel',
+      cancel: function() {
+        // add cancel code..
+      },
+      buttonClicked: function(index) {
+        var urls = [
+          'https://twitter.com/intent/tweet?url=', // twitter
+          'https://www.facebook.com/sharer/sharer.php?u=', // facebook
+          'https://plus.google.com/share?url=' // google plus
+        ];
+        
+        // open the sharing site with this site's url
+        protocol = $window.location.protocol;
+        host = $window.location.host;
+        $window.open(urls[index] + protocol + '//' + host, '_system');
+        
+        return true;
+      }
+    });
   };
 })
 
