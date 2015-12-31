@@ -105,17 +105,8 @@ Controller for the favorites page
           'https://plus.google.com/share?url=' // google plus
         ];
         
-        
-        var protocol = $window.location.protocol;
-        var host = $window.location.host;
-        
-        if ((protocol + host).length < 10) {
-          protocol = 'https:';
-          host = 'ionic-pierorex.c9users.io:8080'
-        }
-        
         // open the sharing site with this site's url
-        $window.open(urls[index] + protocol + '//' + host, '_system');
+        $window.open(urls[index] + song_url, '_system');
         
         return true;
       }
